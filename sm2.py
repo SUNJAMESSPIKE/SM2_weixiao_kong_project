@@ -263,7 +263,7 @@ def MjrCal(Mj, mj):
         s += mj
     return s
 
-# 计算[k]G
+#点乘
 def kG(k, point, length):
     P = point
     Q = point
@@ -275,7 +275,7 @@ def kG(k, point, length):
             Q = point_add(Q, P, length)
     return Q
 
-
+#点加
 def point_add(P, Q, length):
     Px = int(P[:length], 16)
     Py = int(P[length:], 16)
@@ -291,7 +291,7 @@ def point_add(P, Q, length):
     yNew = hex(yNew)
     return str(xNew)[2:] + str(yNew)[2:]
 
-
+#自加
 def point_double(point, length):
     xPoint = int(point[:length], 16)
     yPoint = int(point[length:], 16)
@@ -305,6 +305,45 @@ def point_double(point, length):
     yNew = hex(yNew)
     return str(xNew)[2:] + str(yNew)[2:]
 
+
+#判读是否为二次剩余
+def isQR(n,p):
+    return pow(n, (p - 1) // 2, p)
+
+
+#求解二次剩余
+def QR(n,p):
+    if isQR(n, p)==-1:
+        return
+    if p % 4 == 3:
+        return pow(n, (p + 1) // 4, p)
+    q = p - 1
+    s = 0
+    while q % 2 == 0:
+        q = q // 2
+        s += 1
+    for z in range(2, p):
+        if isQR(z, p) == p - 1:
+            c = pow(z, q, p)
+            break
+    r = pow(n, (q + 1) // 2, p)
+    t = pow(n, q, p)
+    m = s
+    if t % p == 1:
+        return r
+    else:
+        i = 0
+        while t % p != 1:
+            temp = pow(t, 2 ** (i + 1), p)
+            i += 1
+            if temp % p == 1:
+                b = pow(c, 2 ** (m - i - 1), p)
+                r = r * b % p
+                c = b * b % p
+                t = t * c % p
+                m = i
+                i = 0
+        return r
 
 def encryption(M, PA, length, strHex=0):  # 加密函数，M消息，PA公钥
     if strHex:
@@ -388,7 +427,6 @@ def verification(i):
     print(Pa)
     print("\nSecret key is :")
     print(d)
-    e='fuck you sdu!'
     print("\nSecret is :")
     print(e)
 
@@ -397,10 +435,31 @@ def verification(i):
     print(C)
 
     m = decryption(C, d, len_para)
+    print(type(m))
+    print(m)
     M = bytes.fromhex(m)
+    print(M)
     print("\nDecrypt secret is :")
-    print(M.decode())
+    print(type(M.decode()))
 
+def gcd(a,b):
+    if a<b:
+        t=a
+        a=b
+        b=t
+    while a%b!=0:
+        temp=a%b
+        a=b
+        b=temp
+    return b
 
-
-verification(1)
+def Inverse(a,m):#
+    Gcd=gcd(a, m)
+    if Gcd!=1:
+        return None
+    u1,u2,u3 = 1,0,a
+    v1,v2,v3 = 0,1,m
+    while v3!=0:
+        q = u3//v3
+        v1,v2,v3,u1,u2,u3 = (u1-q*v1),(u2-q*v2),(u3-q*v3),v1,v2,v3
+    return u1%m
