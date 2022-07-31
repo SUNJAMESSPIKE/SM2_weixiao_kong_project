@@ -435,12 +435,12 @@ def verification(i):
     print(C)
 
     m = decryption(C, d, len_para)
-    print(type(m))
+    print(m)
     print(m)
     M = bytes.fromhex(m)
     print(M)
     print("\nDecrypt secret is :")
-    print(type(M.decode()))
+    print(M.decode())
 
 def gcd(a,b):
     if a<b:
@@ -463,3 +463,4 @@ def Inverse(a,m):#
         q = u3//v3
         v1,v2,v3,u1,u2,u3 = (u1-q*v1),(u2-q*v2),(u3-q*v3),v1,v2,v3
     return u1%m
+
